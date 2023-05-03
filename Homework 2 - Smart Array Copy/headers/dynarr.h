@@ -50,13 +50,15 @@ public:
 
 int & operator[](int index);
 
-void operator=(Dynarr& other_arr);
+Dynarr & operator=(Dynarr& other_arr);
 
 // Constructor
 
 Dynarr() = delete;
 
 Dynarr(int logical_size, int actual_size);
+
+Dynarr(const Dynarr & other_arr);
 
 // Destructor
 

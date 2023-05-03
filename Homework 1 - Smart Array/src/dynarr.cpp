@@ -14,25 +14,49 @@ int & jinx::Dynarr::operator[](int index)
   throw jinx::ArrayIndexOutOfBounds();
 }
 
-void jinx::Dynarr::operator=(jinx::Dynarr & other_arr)
+jinx::Dynarr & jinx::Dynarr::operator=(jinx::Dynarr & other_arr)
 {
-  if ( this->fullLength() < other_arr.fullLength() )
-  {
-    for (int i = 0; i < other_arr.length(); ++i)
-      {
-        this->arr[i] = other_arr[i];
-      }
-  }
-  else if ( this->fullLength() > other_arr.fullLength() )
-  {
-    for (int i = 0; i < this->length(); ++i)
-      {
-        this->arr[i] = other_arr[i];
-      }
-  }
+    if (this != &other_arr) 
+    {
+
+        if (this->length() < other_arr.length())
+        {
+            delete[] this->arr;
+            this->arr_actual_length = other_arr.arr_actual_length;
+            this->arr_logical_length = other_arr.arr_logical_length;
+            arr = new int[arr_actual_length] {0};
+
+            for (int i = 0; i < arr_logical_length; ++i)
+            {
+                this->arr[i] = other_arr[i];
+            }
+        }
+        else if (this->length() > other_arr.length())
+        {
+            for (int i = 0; i < other_arr.length(); ++i)
+            {
+                this->arr[i] = other_arr[i];
+            }
+        }
+
+    } // END OF if this != &other_arr
+
+    return *this;
 }
 
 // Constructor
+
+jinx::Dynarr::Dynarr(const jinx::Dynarr & other_arr)
+{
+    arr_logical_length = other_arr.length();
+    arr_actual_length = other_arr.fullLength();
+    this->arr = new int[arr_logical_length] {0};    
+
+    for (int i = 0; i < arr_logical_length; ++i)
+    {
+        this->arr[i] = other_arr.arr[i];
+    }
+}
 
 jinx::Dynarr::Dynarr(int logical_size, int actual_size) {
   if (actual_size < logical_size) 
@@ -98,7 +122,7 @@ int jinx::Dynarr::length() const
 void jinx::Dynarr::append(int num)
 {
   /*
-Åñëè ëîãè÷åñêèé ðàçìåð ìàññèâà ðàâåí åãî ôàêòè÷åñêîìó ðàçìåðó, òîãäà ñîçäà¸òñÿ íîâûé ìàññèâ ðàçìåðîì â 2 ðàçà áîëüøå. Â íåãî ïåðåêëàäûâàþòñÿ ýëåìåíòû èç ñòàðîãî ìàññèâà âìåñòå ñ íîâûì ýëåìåíòîì â êîíöå. Ôàêòè÷åñêèé è ëîãè÷åñêèé ðàçìåðû ìàññèâà èçìåíÿþò ñâî¸ çíà÷åíèå. Ëîãè÷åñêèé ðàçìåð óâåëè÷èâàåòñÿ íà åäèíèöó, ôàêòè÷åñêèé ðàçìåð óâåëè÷èâàåòñÿ â äâà ðàçà, ñòàðûé ìàññèâ óíè÷òîæàåòñÿ. Äàëåå ïðîãðàììà äîëæíà ðàáîòàòü óæå ñ íîâûì ìàññèâîì.
+Ð•ÑÐ»Ð¸ Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð¼Ð°ÑÑÐ¸Ð²Ð° Ñ€Ð°Ð²ÐµÐ½ ÐµÐ³Ð¾ Ñ„Ð°ÐºÑ‚Ð¸Ñ‡ÐµÑÐºÐ¾Ð¼Ñƒ Ñ€Ð°Ð·Ð¼ÐµÑ€Ñƒ, Ñ‚Ð¾Ð³Ð´Ð° ÑÐ¾Ð·Ð´Ð°Ñ‘Ñ‚ÑÑ Ð½Ð¾Ð²Ñ‹Ð¹ Ð¼Ð°ÑÑÐ¸Ð² Ñ€Ð°Ð·Ð¼ÐµÑ€Ð¾Ð¼ Ð² 2 Ñ€Ð°Ð·Ð° Ð±Ð¾Ð»ÑŒÑˆÐµ. Ð’ Ð½ÐµÐ³Ð¾ Ð¿ÐµÑ€ÐµÐºÐ»Ð°Ð´Ñ‹Ð²Ð°ÑŽÑ‚ÑÑ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð¸Ð· ÑÑ‚Ð°Ñ€Ð¾Ð³Ð¾ Ð¼Ð°ÑÑÐ¸Ð²Ð° Ð²Ð¼ÐµÑÑ‚Ðµ Ñ Ð½Ð¾Ð²Ñ‹Ð¼ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð¼ Ð² ÐºÐ¾Ð½Ñ†Ðµ. Ð¤Ð°ÐºÑ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ð¸ Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€Ñ‹ Ð¼Ð°ÑÑÐ¸Ð²Ð° Ð¸Ð·Ð¼ÐµÐ½ÑÑŽÑ‚ ÑÐ²Ð¾Ñ‘ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ. Ð›Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€ ÑƒÐ²ÐµÐ»Ð¸Ñ‡Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ð½Ð° ÐµÐ´Ð¸Ð½Ð¸Ñ†Ñƒ, Ñ„Ð°ÐºÑ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€ ÑƒÐ²ÐµÐ»Ð¸Ñ‡Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ð² Ð´Ð²Ð° Ñ€Ð°Ð·Ð°, ÑÑ‚Ð°Ñ€Ñ‹Ð¹ Ð¼Ð°ÑÑÐ¸Ð² ÑƒÐ½Ð¸Ñ‡Ñ‚Ð¾Ð¶Ð°ÐµÑ‚ÑÑ. Ð”Ð°Ð»ÐµÐµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð° Ð´Ð¾Ð»Ð¶Ð½Ð° Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ñ‚ÑŒ ÑƒÐ¶Ðµ Ñ Ð½Ð¾Ð²Ñ‹Ð¼ Ð¼Ð°ÑÑÐ¸Ð²Ð¾Ð¼.
   */
 
   if (arr_logical_length == arr_actual_length)
@@ -112,7 +136,7 @@ void jinx::Dynarr::append(int num)
     
     delete [] arr;
 
-    // Êîëè÷åñòâî äîêèäûâàåìûõ ýëåìåíòîâ
+    // ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð´Ð¾ÐºÐ¸Ð´Ñ‹Ð²Ð°ÐµÐ¼Ñ‹Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
     
     if (arr_actual_length < 10)
       arr_actual_length *= 2;
@@ -169,7 +193,7 @@ else
     
     delete [] arr;
 
-    // Êîëè÷åñòâî äîêèäûâàåìûõ ýëåìåíòîâ
+    // ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð´Ð¾ÐºÐ¸Ð´Ñ‹Ð²Ð°ÐµÐ¼Ñ‹Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
     
     if (arr_actual_length < 10)
       arr_actual_length = arr_logical_length + 2;

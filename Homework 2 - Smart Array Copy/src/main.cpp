@@ -100,6 +100,38 @@ arr = new_array
 			std::cout << i << ' ';
 		}
 
+		// tests for review
+
+		jinx::Dynarr test_arr(new_arr);
+
+		test_arr.append(9);
+		test_arr.append(8);
+		test_arr.append(7);
+		test_arr.append(6);
+		test_arr.append(5);
+		test_arr.append(4);
+		test_arr.append(3);
+		test_arr.append(2);
+		test_arr.append(1);
+
+		std::cout << "\ntest array:\n";
+
+		for (const int& i : test_arr)
+		{
+			std::cout << i << ' ';
+		}
+
+		// equation
+
+		smart_arr = test_arr;
+
+		std::cout << "\nsmart array after eq:\n";
+
+		for (const int& i : smart_arr)
+		{
+			std::cout << i << ' ';
+		}
+
 		std::cout << std::endl;
 	}
 	catch (const jinx::ArrayIndexOutOfBounds& ex)

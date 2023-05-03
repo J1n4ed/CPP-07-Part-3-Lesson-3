@@ -14,25 +14,49 @@ int & jinx::Dynarr::operator[](int index)
   throw jinx::ArrayIndexOutOfBounds();
 }
 
-void jinx::Dynarr::operator=(jinx::Dynarr & other_arr)
+jinx::Dynarr & jinx::Dynarr::operator=(jinx::Dynarr & other_arr)
 {
-  if ( this->length() < other_arr.length() )
-  {
-    for (int i = 0; i < this->length(); ++i)
-      {
-        this->arr[i] = other_arr[i];
-      }
-  }
-  else if ( this->length() > other_arr.length() )
-  {
-    for (int i = 0; i < other_arr.length(); ++i)
-      {
-        this->arr[i] = other_arr[i];
-      }
-  }
+    if (this != &other_arr) 
+    {
+
+        if (this->length() < other_arr.length())
+        {
+            delete[] this->arr;
+            this->arr_actual_length = other_arr.arr_actual_length;
+            this->arr_logical_length = other_arr.arr_logical_length;
+            arr = new int[arr_actual_length] {0};
+
+            for (int i = 0; i < arr_logical_length; ++i)
+            {
+                this->arr[i] = other_arr[i];
+            }
+        }
+        else if (this->length() > other_arr.length())
+        {
+            for (int i = 0; i < other_arr.length(); ++i)
+            {
+                this->arr[i] = other_arr[i];
+            }
+        }
+
+    } // END OF if this != &other_arr
+
+    return *this;
 }
 
 // Constructor
+
+jinx::Dynarr::Dynarr(const jinx::Dynarr & other_arr)
+{
+    arr_logical_length = other_arr.length();
+    arr_actual_length = other_arr.fullLength();
+    this->arr = new int[arr_logical_length] {0};    
+
+    for (int i = 0; i < arr_logical_length; ++i)
+    {
+        this->arr[i] = other_arr.arr[i];
+    }
+}
 
 jinx::Dynarr::Dynarr(int logical_size, int actual_size) {
   if (actual_size < logical_size) 

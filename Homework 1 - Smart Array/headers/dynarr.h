@@ -10,6 +10,8 @@ class Dynarr
 {
 public:
 
+	// PUBLIC PART
+
   // simple print
   void simple_print() const; 
 
@@ -28,11 +30,27 @@ public:
   // access element (for pointers)
   int & get_element(int index);
 
+  // ---- interators
+
+  class iterator 
+  {
+  public:
+	  iterator(int * ptr) : ptr(ptr) {}
+	  iterator operator++() { ++ptr; return *this; }
+	  bool operator!=(const iterator& other) const { return ptr != other.ptr; }
+	  const int & operator*() const { return *ptr; }
+  private:
+	  int * ptr;
+  };
+
+  iterator begin() const { return iterator(arr); }
+  iterator end() const { return iterator(arr + arr_logical_length); }
+
 // Overloads
 
 int & operator[](int index);
 
-void operator=(Dynarr& other_arr);
+Dynarr & operator=(Dynarr& other_arr);
 
 // Constructor
 
@@ -40,16 +58,28 @@ Dynarr() = delete;
 
 Dynarr(int logical_size, int actual_size);
 
+Dynarr(const Dynarr & other_arr);
+
 // Destructor
 
 ~Dynarr();
 
 protected:
+
+	// PROTECTED PART
+
+	// none yet
+
 private:
+
+	// PRIVATE PART
+
   int * arr = nullptr;
   int arr_logical_length = -1;
   int arr_actual_length = -1;
 }; // END OF DYNARR CLASS
+
+// ------------------------------------------------------------------------
 
 // Func (?)
 
@@ -61,7 +91,7 @@ class ArrayIndexOutOfBounds : public std::exception
 public:
 		const char* what() const noexcept override
 		{
-			return "\n > Œÿ»¡ ¿: ËÌ‰ÂÍÒ ˝ÎÂÏÂÌÚ‡ Á‡ ÔÂ‰ÂÎ‡ÏË Ï‡ÒÒË‚‡!";
+			return "\n > –û–®–ò–ë–ö–ê: –∏–Ω–¥–µ–∫—Å —ç–ª–µ–º–µ–Ω—Ç–∞ –∑–∞ –ø—Ä–µ–¥–µ–ª–∞–º–∏ –º–∞—Å—Å–∏–≤–∞!";
 		}
 };
 
@@ -70,7 +100,7 @@ class ArrayIsNullPtr : public std::exception
 public:
 		const char* what() const noexcept override
 		{
-			return "\n > Œÿ»¡ ¿: Ï‡ÒÒË‚ ÌÂ ÒÛ˘ÂÒÚ‚ÛÂÚ!";
+			return "\n > –û–®–ò–ë–ö–ê: –º–∞—Å—Å–∏–≤ –Ω–µ —Å—É—â–µ—Å—Ç–≤—É–µ—Ç!";
 		}
 };
 
@@ -79,7 +109,7 @@ class LogicalToActualSizeMismatch : public std::exception
 public:
 		const char* what() const noexcept override
 		{
-			return "\n > Œÿ»¡ ¿: ‰ÂÈÒÚ‚ËÚÂÎ¸Ì˚È ‡ÁÏÂ ÌÂ ÒÓÓÚÒ‚ÂÚÒÚ‚ÛÂÚ ÎÓ„Ë˜ÂÒÍÓÏÛ!";
+			return "\n > –û–®–ò–ë–ö–ê: –¥–µ–π—Å—Ç–≤–∏—Ç–µ–ª—å–Ω—ã–π —Ä–∞–∑–º–µ—Ä –Ω–µ —Å–æ–æ—Ç—Å–≤–µ—Ç—Å—Ç–≤—É–µ—Ç –ª–æ–≥–∏—á–µ—Å–∫–æ–º—É!";
 		}
 };
 
@@ -88,7 +118,7 @@ class LogicalOrActualSizeLessThenZero : public std::exception
 public:
 		const char* what() const noexcept override
 		{
-			return "\n > Œÿ»¡ ¿: ÎÓ„Ë˜ÂÒÍËÈ ËÎË Ù‡ÍÚË˜ÂÒÍËÈ ‡ÁÏÂ˚ ÏÂÌ¸¯Â ÌÛÎˇ!";
+			return "\n > –û–®–ò–ë–ö–ê: –ª–æ–≥–∏—á–µ—Å–∫–∏–π –∏–ª–∏ —Ñ–∞–∫—Ç–∏—á–µ—Å–∫–∏–π —Ä–∞–∑–º–µ—Ä—ã –º–µ–Ω—å—à–µ –Ω—É–ª—è!";
 		}
 };
 
